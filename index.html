@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  #canvas {
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const cover = new Image();
+cover.src = "cover.png";      
+const prize = new Image();
+prize.src = "prize.png";
+
+canvas.width = 350;
+canvas.height = 350;
+
+prize.onload = function() {
+  ctx.drawImage(prize, 0, 0, canvas.width, canvas.height);
+
+  cover.onload = function() {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.drawImage(cover, 0, 0, canvas.width, canvas.height);
+
+    ctx.globalCompositeOperation = "destination-out";
+  };
+};
+
+let isDrawing = false;
+
+canvas.addEventListener("touchstart", () => isDrawing = true);
+canvas.addEventListener("touchend", () => isDrawing = false);
+canvas.addEventListener("touchmove", (e) => {
+  if (!isDrawing) return;
+  let touch = e.touches[0];
+  let rect = canvas.getBoundingClientRect();
+  let x = touch.clientX - rect.left;
+  let y = touch.clientY - rect.top;
+  ctx.beginPath();
+  ctx.arc(x, y, 30, 0, Math.PI * 2);
+  ctx.fill();
+});
+</script>
+
+</body>
+</html>
